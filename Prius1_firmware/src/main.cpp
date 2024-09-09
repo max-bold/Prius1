@@ -5,7 +5,7 @@
 void setup()
 {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(2, INPUT_PULLUP);
   pinMode(3, INPUT);
@@ -29,14 +29,15 @@ void loop()
   }
   else
   {
-    temp = 65;
+    temp = 165;
   }
-  String data = String(digitalRead(2)) + "/" +
+  String data = "\r                                                             \r" +
+                String(digitalRead(2)) + "/" +
                 String(digitalRead(3)) + "/" +
                 String(digitalRead(4)) + "/" +
                 String(digitalRead(5)) + "/" +
                 temp + "/" +
                 posvol;
-  Serial.println(data);
+  Serial.print(data);
   delay(500);
 }
