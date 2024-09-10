@@ -1,17 +1,45 @@
 #include <Arduino.h>
+#include <TimerOne.h>
 
-#define pin 2
+#define open_pin 2  // Valve open signal from ECU, inverted, need pulup
+#define close_pin 3 // Valve close signal from ECU, inverted, need pulup
+#define pump_pin 4  // Pump control, inverted, need pulup
+#define pos_pin 5   // PWM output emulating valve position sensor
+#define temp_pin 6  // PWM output emlating temperature sensor
+
+volatile unsigned char pos = 127;
+volatile unsigned char temp = 127;
+
+const char pos_incr = 1;
+
+void ontimer()
+{
+  if (digitalRead(open_pin) == LOW)
+  {
+    pos += pos_incr;
+    analogWrite(pos_pin, pos);
+  }
+  if (digitalRead(close_pin) == LOW)
+  {
+    pos -= pos_incr;
+    analogWrite(pos_pin, pos);
+  }
+}
 
 void setup()
 {
-  // put your setup code here, to run once:
-  Serial.begin(115200);
-  pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(2, INPUT_PULLUP);
-  pinMode(3, INPUT);
-  pinMode(4, INPUT);
-  pinMode(5, INPUT);
-  Serial.setTimeout(10);
+  // Setting inputs and outputs
+  pinMode(open_pin, INPUT_PULLUP);
+  pinMode(close_pin, INPUT_PULLUP);
+  pinMode(pump_pin, INPUT_PULLUP);
+  pinMode(pos_pin, OUTPUT);
+  pinMode(temp_pin, OUTPUT);
+  analogWrite(pos_pin, pos);
+  analogWrite(temp_pin, temp);
+
+  // Starting timer and attach an interrupt to it
+  Timer1.initialize(100000);
+  Timer1.attachInterrupt(ontimer);
 }
 
 int led = 0;
