@@ -4,21 +4,24 @@
 
 #define open_pin 3    // Valve open signal from ECU, inverted, need pullup
 #define close_pin 4   // Valve close signal from ECU, inverted, need pullup
-#define pump_pin 5    // Pump control, inverted, need pullup
+#define pump_pin 7    // Pump control, inverted, need pullup
 #define p_contr_pin 2 // Power supply control pin, inverted, need pullup
-#define pos_pin 6     // PWM output emulating valve position sensor
-#define temp_pin 7    // PWM output emulating temperature sensor
+#define pos_pin 5    // PWM output emulating valve position sensor
+#define temp_pin 6    // PWM output emulating temperature sensor
+
+#define p_contr_inter digitalPinToInterrupt(p_contr_pin)
 
 const unsigned char initkey = 10;
 const int initaddr = 0;
 const int dataaddr = 1;
 
-#define debug
+// #define debug
 
 struct Data
 {
   float pos = 3.5;
   float temp = 40;
+  unsigned char upd = 1;
 };
 
 volatile Data data;
@@ -42,25 +45,23 @@ void ontimer()
   if (digitalRead(open_pin) == LOW)
   {
     data.pos += pos_incr;
-    analogWrite(pos_pin, postopwm(data.pos));
   }
   if (digitalRead(close_pin) == LOW)
   {
     data.pos -= pos_incr;
-    analogWrite(pos_pin, postopwm(data.pos));
   }
 }
-
-const String blank = "\r                                                             \r";
 
 #ifdef debug
 void serialreport()
 {
+  const String blank = "\r                                                             \r";
+
   String s = blank +
-             String(digitalRead(2)) + "/" +
-             String(digitalRead(3)) + "/" +
-             String(digitalRead(4)) + "/" +
-             String(digitalRead(5)) + "/" +
+             String(digitalRead(open_pin)) + "/" +
+             String(digitalRead(close_pin)) + "/" +
+             String(digitalRead(pump_pin)) + "/" +
+             String(digitalRead(p_contr_pin)) + "/" +
              data.temp + "/" +
              data.pos;
   Serial.print(s);
@@ -103,7 +104,7 @@ void setup()
   Serial.begin(115200);
 #endif
 
-  attachInterrupt(digitalPinToInterrupt(p_contr_pin), savevals, FALLING);
+  attachInterrupt(p_contr_inter, savevals, FALLING);
   restorevals();
   savevals();
 
@@ -114,6 +115,13 @@ void loop()
 {
 #ifdef debug
   serialreport();
-  delay(100);
+  // delay(100);
 #endif
+
+  if (data.upd)
+  {
+    analogWrite(pos_pin, postopwm(data.pos));
+    analogWrite(temp_pin, temptopwm(data.temp));
+    data.upd = 0;
+  }
 }
