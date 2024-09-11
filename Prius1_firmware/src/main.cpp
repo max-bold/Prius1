@@ -110,8 +110,9 @@ void setup()
 
   Serial.begin(115200);
 }
-
+#ifdef debug
 unsigned long ctime = 0;
+#endif
 
 void loop()
 {
