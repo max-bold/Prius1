@@ -6,16 +6,16 @@
 #define close_pin 4   // Valve close signal from ECU, inverted, need pullup
 #define pump_pin 7    // Pump control, inverted, need pullup
 #define p_contr_pin 2 // Power supply control pin, inverted, need pullup
-#define pos_pin 5    // PWM output emulating valve position sensor
+#define pos_pin 5     // PWM output emulating valve position sensor
 #define temp_pin 6    // PWM output emulating temperature sensor
 
 #define p_contr_inter digitalPinToInterrupt(p_contr_pin)
 
-const unsigned char initkey = 10;
+const unsigned char initkey = 11;
 const int initaddr = 0;
 const int dataaddr = 1;
 
-// #define debug
+#define debug
 
 struct Data
 {
@@ -55,7 +55,7 @@ void ontimer()
 #ifdef debug
 void serialreport()
 {
-  const String blank = "\r                                                             \r";
+  const String blank = "\r                  \r";
 
   String s = blank +
              String(digitalRead(open_pin)) + "/" +
@@ -77,7 +77,7 @@ void savevals()
 void restorevals()
 {
   unsigned char rkey;
-  EEPROM.get(initkey, rkey);
+  EEPROM.get(initaddr, rkey);
   if (rkey == initkey)
   {
     EEPROM.get(dataaddr, data);
@@ -111,11 +111,16 @@ void setup()
   Serial.begin(115200);
 }
 
+unsigned long ctime = 0;
+
 void loop()
 {
 #ifdef debug
-  serialreport();
-  // delay(100);
+  if (ctime + 100 < millis())
+  {
+    serialreport();
+    ctime = millis();
+  }
 #endif
 
   if (data.upd)
