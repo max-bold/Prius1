@@ -57,7 +57,7 @@ void ontimer()
 #ifdef debug
 void serialreport()
 {
-  const String blank = "\r                  \r";
+  const char blank[35] = "\r                                \r";
 
   String s = blank +
              String(digitalRead(open_pin)) + "/" +
@@ -65,7 +65,9 @@ void serialreport()
              String(digitalRead(pump_pin)) + "/" +
              String(digitalRead(p_contr_pin)) + "/" +
              data.temp + "/" +
-             data.pos;
+             data.pos + "/" +
+             e_temp + "/" +
+             e_temp_emul;
   Serial.print(s);
 }
 #endif
