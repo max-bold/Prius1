@@ -8,10 +8,12 @@
 #define p_contr_pin 2 // Power supply control pin, inverted, need pullup
 #define pos_pin 5     // PWM output emulating valve position sensor
 #define temp_pin 6    // PWM output emulating temperature sensor
+#define e_temp_in A0  // ADC input for engine temperature sensor
+#define e_temp_out 8  // PWM output emulating engine temperature sensor
 
 #define p_contr_inter digitalPinToInterrupt(p_contr_pin)
 
-const unsigned char initkey = 11;
+const unsigned char initkey = 12;
 const int initaddr = 0;
 const int dataaddr = 1;
 
@@ -25,14 +27,14 @@ struct Data
 };
 
 volatile Data data;
+float e_temp;
+float e_temp_emul;
 
 const float pos_incr = 0.1;
 
 int postopwm(float val)
 {
-  const float A = 10;
-  const float B = 15;
-  return min(max(0, val * A + B), 255);
+  return 0, val * 51 + 0;
 }
 
 int temptopwm(float val)
@@ -70,18 +72,22 @@ void serialreport()
 
 void savevals()
 {
-  EEPROM.put(initaddr, initkey);
   EEPROM.put(dataaddr, data);
 }
 
 void restorevals()
 {
-  unsigned char rkey;
-  EEPROM.get(initaddr, rkey);
-  if (rkey == initkey)
-  {
-    EEPROM.get(dataaddr, data);
-  }
+  EEPROM.get(dataaddr, data);
+}
+
+float adctoetemp(int adc)
+{
+  return (788.48 - adc) / 5.4272;
+}
+
+int etemptopwm(float temp)
+{
+  return temp * -1.3515 + 196.3;
 }
 
 void setup()
@@ -105,8 +111,18 @@ void setup()
 #endif
 
   attachInterrupt(p_contr_inter, savevals, FALLING);
-  restorevals();
-  savevals();
+
+  // Load data from EEPROM and try save it back (for first run)
+  unsigned char rkey;
+  if (EEPROM.get(initaddr, rkey) == initkey)
+  {
+    restorevals();
+  }
+  else
+  {
+    savevals();
+    EEPROM.put(initaddr, initkey);
+  }
 
   Serial.begin(115200);
 }
@@ -124,10 +140,16 @@ void loop()
   }
 #endif
 
+  // Updating analog outputs
   if (data.upd)
   {
     analogWrite(pos_pin, postopwm(data.pos));
     analogWrite(temp_pin, temptopwm(data.temp));
     data.upd = 0;
   }
+
+  // Emulating engine temperature sensor
+  e_temp = adctoetemp(analogRead(e_temp_in));
+  e_temp_emul = e_temp;
+  analogWrite(e_temp_out, etemptopwm(e_temp_emul));
 }
