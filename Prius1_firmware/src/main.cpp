@@ -239,9 +239,6 @@ void setup()
   {
     ee.save();
   }
-  ttemp.update();
-  etemp.update();
-  valve.update();
 
   Serial.begin(115200);
 }
