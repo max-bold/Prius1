@@ -13,29 +13,119 @@
 
 #define p_contr_inter digitalPinToInterrupt(p_contr_pin)
 
-const unsigned char initkey = 12;
+const unsigned char initkey = 13;
 const int initaddr = 0;
 const int dataaddr = 1;
 
 #define debug
 
-struct Data
+class Valve
 {
+private:
   float pos = 3.5;
-  float temp = 40;
-  unsigned char upd = 1;
-};
+  const float posinc = 0.1;
+  bool upd = true;
 
-volatile Data data;
-float e_temp;
-float e_temp_emul;
+public:
+  int topwm()
+  {
+    return pos * 51 + 0;
+  };
+  bool isA()
+  {
+    return pos <= 3.0;
+  }
+  bool isB()
+  {
+    return 3.0 < pos && pos < 4.0;
+  }
+  bool isC()
+  {
+    return pos >= 4.0;
+  }
+  void open()
+  {
+    pos += posinc;
+    upd = true;
+  }
+  void close()
+  {
+    pos -= posinc;
+    upd = true;
+  }
+  void setpos(float val)
+  {
+    pos = val;
+    upd = true;
+  }
+  float getpos()
+  {
+    return pos;
+  }
 
-const float pos_incr = 0.1;
+  void updateuot()
+  {
+    if (upd == true)
+    {
+      analogWrite(pos_pin, topwm());
+      upd = false;
+    }
+  }
+} valve;
 
-int postopwm(float val)
+class Tanktemp
 {
-  return 0, val * 51 + 0;
-}
+private:
+  float temp = 40;
+  bool upd = true;
+
+public:
+  void set(float val)
+  {
+    Tanktemp::temp = val;
+    Tanktemp::upd = true;
+  }
+  float get()
+  {
+    return Tanktemp::temp;
+  }
+  void updateout()
+  {
+    if (upd)
+    {
+      int val = temp * -1.3515 + 196.3;
+      analogWrite(temp_pin, val);
+      upd = false;
+    }
+  }
+} ttemp;
+
+class EngineTemp
+{
+private:
+  float temp = 0;
+
+public:
+  void update()
+  {
+    int adc = analogRead(e_temp_in);
+    analogWrite(e_temp_out, adc / 4);
+    fromadc(adc);
+  }
+  void fromadc(int adc)
+  {
+    temp = (788.48 - adc) / 5.4272;
+  }
+
+  int topwm()
+  {
+    return temp * -1.3515 + 196.3;
+  }
+  float get()
+  {
+    return temp;
+  }
+} etemp;
 
 int temptopwm(float val)
 {
@@ -46,51 +136,82 @@ void ontimer()
 {
   if (digitalRead(open_pin) == LOW)
   {
-    data.pos += pos_incr;
+    valve.open();
   }
   if (digitalRead(close_pin) == LOW)
   {
-    data.pos -= pos_incr;
+    valve.close();
   }
 }
 
 #ifdef debug
-void serialreport()
+class Debugger
 {
-  const char blank[35] = "\r                                \r";
+private:
+  void report()
+  {
+    const char blank[35] = "\r                                \r";
 
-  String s = blank +
-             String(digitalRead(open_pin)) + "/" +
-             String(digitalRead(close_pin)) + "/" +
-             String(digitalRead(pump_pin)) + "/" +
-             String(digitalRead(p_contr_pin)) + "/" +
-             data.temp + "/" +
-             data.pos + "/" +
-             e_temp + "/" +
-             e_temp_emul;
-  Serial.print(s);
-}
+    String s = blank +
+               String(digitalRead(open_pin)) + "/" +
+               String(digitalRead(close_pin)) + "/" +
+               String(digitalRead(pump_pin)) + "/" +
+               String(digitalRead(p_contr_pin)) + "/" +
+               valve.getpos() + "/" +
+               ttemp.get() + "/" +
+               etemp.get();
+    Serial.print(s);
+  }
+  unsigned long lasttime = 0;
+
+public:
+  void work()
+  {
+    if (lasttime + 100 < millis() || lasttime > millis())
+    {
+      report();
+      lasttime = millis();
+    }
+  }
+} debugger;
 #endif
 
-void savevals()
+class EE
 {
-  EEPROM.put(dataaddr, data);
-}
+private:
+  struct Data
+  {
+    float pos;
+    float temp;
+  } data;
 
-void restorevals()
-{
-  EEPROM.get(dataaddr, data);
-}
+public:
+  void save()
+  {
+    data.pos = valve.getpos();
+    data.temp = ttemp.get();
+    EEPROM.put(dataaddr, data);
+    EEPROM.put(initaddr, initkey);
+  }
+  bool restore()
+  {
+    unsigned char initval;
+    if (EEPROM.get(initaddr, initval) == initkey)
+    {
+      EEPROM.get(dataaddr, data);
+      valve.setpos(data.pos);
+      ttemp.set(data.temp);
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
 
-float adctoetemp(int adc)
-{
-  return (788.48 - adc) / 5.4272;
-}
+} ee;
 
-int etemptopwm(float temp)
-{
-  return temp * -1.3515 + 196.3;
-}
+void ptr() { ee.save(); }
 
 void setup()
 {
@@ -102,56 +223,39 @@ void setup()
   pinMode(pos_pin, OUTPUT);
   pinMode(temp_pin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
-  analogWrite(pos_pin, data.pos);
-  analogWrite(temp_pin, data.temp);
 
   // Starting timer and attach an interrupt to it
   Timer1.initialize(100000);
   Timer1.attachInterrupt(ontimer);
+
 #ifdef debug
   Serial.begin(115200);
 #endif
 
-  attachInterrupt(p_contr_inter, savevals, FALLING);
+  attachInterrupt(p_contr_inter, ptr, FALLING);
 
   // Load data from EEPROM and try save it back (for first run)
-  unsigned char rkey;
-  if (EEPROM.get(initaddr, rkey) == initkey)
+  if (!ee.restore())
   {
-    restorevals();
+    ee.save();
   }
-  else
-  {
-    savevals();
-    EEPROM.put(initaddr, initkey);
-  }
+  ttemp.updateout();
+  etemp.update();
+  valve.updateuot();
 
   Serial.begin(115200);
 }
-#ifdef debug
-unsigned long ctime = 0;
-#endif
+
 
 void loop()
 {
+
 #ifdef debug
-  if (ctime + 100 < millis())
-  {
-    serialreport();
-    ctime = millis();
-  }
+  debugger.work();
 #endif
 
   // Updating analog outputs
-  if (data.upd)
-  {
-    analogWrite(pos_pin, postopwm(data.pos));
-    analogWrite(temp_pin, temptopwm(data.temp));
-    data.upd = 0;
-  }
-
-  // Emulating engine temperature sensor
-  e_temp = adctoetemp(analogRead(e_temp_in));
-  e_temp_emul = e_temp;
-  analogWrite(e_temp_out, etemptopwm(e_temp_emul));
+  valve.updateuot();
+  ttemp.updateout();
+  etemp.update();
 }
