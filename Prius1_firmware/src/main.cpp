@@ -53,7 +53,7 @@ public:
     pos -= posinc;
     upd = true;
   }
-  void setpos(float val)
+  void set(float val)
   {
     pos = val;
     upd = true;
@@ -63,7 +63,7 @@ public:
     return pos;
   }
 
-  void updateuot()
+  void update()
   {
     if (upd == true)
     {
@@ -89,7 +89,7 @@ public:
   {
     return Tanktemp::temp;
   }
-  void updateout()
+  void update()
   {
     if (upd)
     {
@@ -199,7 +199,7 @@ public:
     if (EEPROM.get(initaddr, initval) == initkey)
     {
       EEPROM.get(dataaddr, data);
-      valve.setpos(data.pos);
+      valve.set(data.pos);
       ttemp.set(data.temp);
       return true;
     }
@@ -211,7 +211,7 @@ public:
 
 } ee;
 
-void ptr() { ee.save(); }
+void ee_save() { ee.save(); }
 
 void setup()
 {
@@ -232,16 +232,16 @@ void setup()
   Serial.begin(115200);
 #endif
 
-  attachInterrupt(p_contr_inter, ptr, FALLING);
+  attachInterrupt(p_contr_inter, ee_save, FALLING);
 
   // Load data from EEPROM and try save it back (for first run)
   if (!ee.restore())
   {
     ee.save();
   }
-  ttemp.updateout();
+  ttemp.update();
   etemp.update();
-  valve.updateuot();
+  valve.update();
 
   Serial.begin(115200);
 }
@@ -255,7 +255,7 @@ void loop()
 #endif
 
   // Updating analog outputs
-  valve.updateuot();
-  ttemp.updateout();
+  valve.update();
+  ttemp.update();
   etemp.update();
 }
