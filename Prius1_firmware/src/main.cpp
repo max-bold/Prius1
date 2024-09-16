@@ -23,8 +23,8 @@ class Valve
 {
 private:
   float pos = 3.5;
-  const float posinc = 0.1;
-  bool upd = true;
+  const float posinc = 0.5; // in V/s
+  unsigned long lt = 0;
 
 public:
   int topwm()
@@ -43,34 +43,42 @@ public:
   {
     return pos >= 4.0;
   }
-  void open()
-  {
-    pos += posinc;
-    upd = true;
-  }
-  void close()
-  {
-    pos -= posinc;
-    upd = true;
-  }
+
   void set(float val)
   {
     pos = val;
-    upd = true;
+    update();
   }
-  float getpos()
+  float get()
   {
     return pos;
   }
 
   void update()
   {
-    if (upd == true)
+    unsigned long ct = millis();
+    if (ct > lt)
     {
-      analogWrite(pos_pin, topwm());
-      upd = false;
+      int op_state = digitalRead(open_pin);
+      int cp_state = digitalRead(close_pin);
+      if (op_state == LOW || cp_state == LOW)
+      {
+        unsigned long dt = ct - lt;
+        float dv = dt * posinc / 1000;
+        if (op_state == LOW)
+        {
+          pos += dv;
+        }
+        if (cp_state == LOW)
+        {
+          pos -= dv;
+        }
+        analogWrite(pos_pin, topwm());
+      }
     }
+    lt = ct;
   }
+
 } valve;
 
 class Tanktemp
@@ -82,8 +90,8 @@ private:
 public:
   void set(float val)
   {
-    Tanktemp::temp = val;
-    Tanktemp::upd = true;
+    temp = val;
+    upd = true;
   }
   float get()
   {
@@ -132,18 +140,6 @@ int temptopwm(float val)
   return val * 10 + 15;
 }
 
-void ontimer()
-{
-  if (digitalRead(open_pin) == LOW)
-  {
-    valve.open();
-  }
-  if (digitalRead(close_pin) == LOW)
-  {
-    valve.close();
-  }
-}
-
 #ifdef debug
 class Debugger
 {
@@ -157,7 +153,7 @@ private:
                String(digitalRead(close_pin)) + "/" +
                String(digitalRead(pump_pin)) + "/" +
                String(digitalRead(p_contr_pin)) + "/" +
-               valve.getpos() + "/" +
+               valve.get() + "/" +
                ttemp.get() + "/" +
                etemp.get();
     Serial.print(s);
@@ -188,7 +184,7 @@ private:
 public:
   void save()
   {
-    data.pos = valve.getpos();
+    data.pos = valve.get();
     data.temp = ttemp.get();
     EEPROM.put(dataaddr, data);
     EEPROM.put(initaddr, initkey);
@@ -224,10 +220,6 @@ void setup()
   pinMode(temp_pin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
 
-  // Starting timer and attach an interrupt to it
-  Timer1.initialize(100000);
-  Timer1.attachInterrupt(ontimer);
-
 #ifdef debug
   Serial.begin(115200);
 #endif
@@ -242,7 +234,6 @@ void setup()
 
   Serial.begin(115200);
 }
-
 
 void loop()
 {
