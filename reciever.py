@@ -15,17 +15,19 @@ class Data(ctypes.Structure):
 
 
 device = serial.Serial("COM3", 115200)
+
 while True:
     data = device.read_until(b"\r\n")
-    struct = Data.from_buffer_copy(data)
-    print(
-        struct.op,
-        struct.cp,
-        struct.pp,
-        struct.pcp,
-        f"{struct.vp:.2f}",
-        f"{struct.tt:.1f}",
-        f"{struct.et:.1f}",
-        sep=" ",
-        end="\r",
-    )
+    if len(data) == 22:
+        struct = Data.from_buffer_copy(data)
+        print(
+            struct.op,
+            struct.cp,
+            struct.pp,
+            struct.pcp,
+            f"{struct.vp:.2f}",
+            f"{struct.tt:.1f}",
+            f"{struct.et:.1f}",
+            sep=" ",
+            end="\r",
+        )
