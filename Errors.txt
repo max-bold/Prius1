@@ -1,0 +1,8 @@
+P1115:  THW2 voltage less than 0.14 V or more than 4.91 V
+P1117:  THW2 voltage less than 0.14 V
+P1118:  THW2 voltage more than 4.91 V
+P1116:  Temperature variation of CHS tank outlet during hot coolant recovery 3°C or less
+    or  Difference between temperatures of CHS tank outlet and engine coolant during hot coolant recovery More than 25°C (45°F)
+    if: difference between engine coolant temperature and CHS tank outlet temperature is more than 30°C (54°F) 
+    and coolant heat recovering is ON for 45 seconds.
+    
