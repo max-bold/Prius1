@@ -24,9 +24,10 @@ class Valve {
   float pos = 3.5;
   const float posinc = 0.5;  // in V/s
   unsigned long lt = 0;
+  bool firstrun = true;
 
  public:
-  int topwm() { return pos * 51 + 0; };
+  int topwm() { return max(0, min(pos * 51 + 0, 255)); };
   bool isA() { return pos <= 3.0; }
   bool isB() { return 3.0 < pos && pos < 4.0; }
   bool isC() { return pos >= 4.0; }
@@ -55,6 +56,10 @@ class Valve {
       }
     }
     lt = ct;
+    if (firstrun) {
+      analogWrite(pos_pin, topwm());
+      firstrun = false;
+    }
   }
 
 } valve;
@@ -130,7 +135,8 @@ class Debugger {
 
  public:
   enum SendMode { ASCII,
-                  BYTES };
+                  BYTES,
+                  PWM };
 
   void work(SendMode mode) {
     if (lasttime + 100 < millis() || lasttime > millis()) {
@@ -138,6 +144,8 @@ class Debugger {
         report();
       } else if (mode == BYTES) {
         senddata();
+      } else if (mode = PWM) {
+        Serial.println(valve.topwm());
       }
 
       lasttime = millis();
