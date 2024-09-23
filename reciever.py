@@ -1,5 +1,6 @@
 import serial
 import ctypes
+import time
 
 
 class Data(ctypes.Structure):
@@ -14,20 +15,29 @@ class Data(ctypes.Structure):
     ]
 
 
-device = serial.Serial("COM3", 115200)
-
 while True:
-    data = device.read_until(b"\r\n")
-    if len(data) == 22:
-        struct = Data.from_buffer_copy(data)
-        print(
-            struct.op,
-            struct.cp,
-            struct.pp,
-            struct.pcp,
-            f"{struct.vp:.2f}",
-            f"{struct.tt:.1f}",
-            f"{struct.et:.1f}",
-            sep=" ",
-            end="\r",
-        )
+    try:
+        device = serial.Serial("COM8", 115200)
+    except:
+        print('Lost connecton!               ', end='\r')
+        time.sleep(0.1)
+    else:
+        while True:
+            try:
+                data = device.read_until(b"\r\n")
+            except:
+                break
+            else:
+                if len(data) == 22:
+                    struct = Data.from_buffer_copy(data)
+                    print(
+                        struct.op,
+                        struct.cp,
+                        struct.pp,
+                        struct.pcp,
+                        f"{struct.vp:.2f}",
+                        f"{struct.tt:.1f}",
+                        f"{struct.et:.1f}",
+                        sep=" ",
+                        end="\r",
+                    )
