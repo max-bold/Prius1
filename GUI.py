@@ -1,6 +1,7 @@
 import sys
 from typing import Iterable, Mapping
 from PySide6.QtWidgets import QApplication, QDialog
+from PySide6.QtCore import Qt
 import serial.tools
 import serial.tools.list_ports
 from Main_ui import Ui_Dialog
@@ -56,17 +57,13 @@ class Worker(Thread):
                         if len(data) == 22:
                             self.ui.StatusLabel.setText(f"Connection OK")
                             struct = Data.from_buffer_copy(data)
-                            print(
-                                struct.op,
-                                struct.cp,
-                                struct.pp,
-                                struct.pcp,
-                                f"{struct.vp:.2f}",
-                                f"{struct.tt:.1f}",
-                                f"{struct.et:.1f}",
-                                sep=" ",
-                                end="\r",
-                            )
+                            self.ui.etvalue.display(f"{struct.et:.1f}")
+                            self.ui.ttvalue.display(f"{struct.tt:.1f}")
+                            self.ui.posvalue.display(f"{struct.vp:.2f}")
+                            self.ui.open_cb.setChecked(struct.op == 0)
+                            self.ui.close_cb.setChecked(struct.cp == 0)
+                            self.ui.pump_cb.setChecked(struct.pp == 0)
+                            self.ui.power_cb.setChecked(struct.pcp == 0)
                         else:
                             self.ui.StatusLabel.setText(f"No data received!")
 

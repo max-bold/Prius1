@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>401</width>
-    <height>329</height>
+    <height>355</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,10 @@
    <item row="5" column="0" colspan="3">
     <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0">
      <item row="2" column="0">
-      <widget class="QCheckBox" name="checkBox_3">
+      <widget class="QCheckBox" name="pump_cb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -25,12 +28,15 @@
         <string>Pump on</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QCheckBox" name="checkBox_2">
+      <widget class="QCheckBox" name="close_cb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -38,12 +44,15 @@
         <string>Close signal</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item row="0" column="0">
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="open_cb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -51,12 +60,15 @@
         <string>Open signal</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QCheckBox" name="checkBox_4">
+      <widget class="QCheckBox" name="power_cb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
@@ -64,7 +76,7 @@
         <string>Power ok</string>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -97,7 +109,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="QLCDNumber" name="lcdNumber_6">
+    <widget class="QLCDNumber" name="etadc">
      <property name="minimumSize">
       <size>
        <width>100</width>
@@ -107,7 +119,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLCDNumber" name="lcdNumber_2">
+    <widget class="QLCDNumber" name="ttvalue">
      <property name="minimumSize">
       <size>
        <width>100</width>
@@ -144,7 +156,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QLCDNumber" name="lcdNumber">
+    <widget class="QLCDNumber" name="posvalue">
      <property name="minimumSize">
       <size>
        <width>100</width>
@@ -164,7 +176,7 @@
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="QLCDNumber" name="lcdNumber_3">
+    <widget class="QLCDNumber" name="etvalue">
      <property name="minimumSize">
       <size>
        <width>100</width>

@@ -23,38 +23,42 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(401, 329)
+        Dialog.resize(401, 355)
         self.gridLayout_2 = QGridLayout(Dialog)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.checkBox_3 = QCheckBox(Dialog)
-        self.checkBox_3.setObjectName(u"checkBox_3")
-        self.checkBox_3.setAutoFillBackground(False)
-        self.checkBox_3.setCheckable(False)
+        self.pump_cb = QCheckBox(Dialog)
+        self.pump_cb.setObjectName(u"pump_cb")
+        self.pump_cb.setEnabled(False)
+        self.pump_cb.setAutoFillBackground(False)
+        self.pump_cb.setCheckable(True)
 
-        self.gridLayout.addWidget(self.checkBox_3, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.pump_cb, 2, 0, 1, 1)
 
-        self.checkBox_2 = QCheckBox(Dialog)
-        self.checkBox_2.setObjectName(u"checkBox_2")
-        self.checkBox_2.setAutoFillBackground(False)
-        self.checkBox_2.setCheckable(False)
+        self.close_cb = QCheckBox(Dialog)
+        self.close_cb.setObjectName(u"close_cb")
+        self.close_cb.setEnabled(False)
+        self.close_cb.setAutoFillBackground(False)
+        self.close_cb.setCheckable(True)
 
-        self.gridLayout.addWidget(self.checkBox_2, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.close_cb, 1, 0, 1, 1)
 
-        self.checkBox = QCheckBox(Dialog)
-        self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setAutoFillBackground(False)
-        self.checkBox.setCheckable(False)
+        self.open_cb = QCheckBox(Dialog)
+        self.open_cb.setObjectName(u"open_cb")
+        self.open_cb.setEnabled(False)
+        self.open_cb.setAutoFillBackground(False)
+        self.open_cb.setCheckable(True)
 
-        self.gridLayout.addWidget(self.checkBox, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.open_cb, 0, 0, 1, 1)
 
-        self.checkBox_4 = QCheckBox(Dialog)
-        self.checkBox_4.setObjectName(u"checkBox_4")
-        self.checkBox_4.setAutoFillBackground(False)
-        self.checkBox_4.setCheckable(False)
+        self.power_cb = QCheckBox(Dialog)
+        self.power_cb.setObjectName(u"power_cb")
+        self.power_cb.setEnabled(False)
+        self.power_cb.setAutoFillBackground(False)
+        self.power_cb.setCheckable(True)
 
-        self.gridLayout.addWidget(self.checkBox_4, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.power_cb, 3, 0, 1, 1)
 
 
         self.gridLayout_2.addLayout(self.gridLayout, 5, 0, 1, 3)
@@ -72,17 +76,17 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.lcdNumber_5, 3, 1, 1, 1)
 
-        self.lcdNumber_6 = QLCDNumber(Dialog)
-        self.lcdNumber_6.setObjectName(u"lcdNumber_6")
-        self.lcdNumber_6.setMinimumSize(QSize(100, 70))
+        self.etadc = QLCDNumber(Dialog)
+        self.etadc.setObjectName(u"etadc")
+        self.etadc.setMinimumSize(QSize(100, 70))
 
-        self.gridLayout_2.addWidget(self.lcdNumber_6, 3, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.etadc, 3, 2, 1, 1)
 
-        self.lcdNumber_2 = QLCDNumber(Dialog)
-        self.lcdNumber_2.setObjectName(u"lcdNumber_2")
-        self.lcdNumber_2.setMinimumSize(QSize(100, 70))
+        self.ttvalue = QLCDNumber(Dialog)
+        self.ttvalue.setObjectName(u"ttvalue")
+        self.ttvalue.setMinimumSize(QSize(100, 70))
 
-        self.gridLayout_2.addWidget(self.lcdNumber_2, 2, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.ttvalue, 2, 1, 1, 1)
 
         self.line = QFrame(Dialog)
         self.line.setObjectName(u"line")
@@ -103,11 +107,11 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.label_3, 1, 2, 1, 1)
 
-        self.lcdNumber = QLCDNumber(Dialog)
-        self.lcdNumber.setObjectName(u"lcdNumber")
-        self.lcdNumber.setMinimumSize(QSize(100, 70))
+        self.posvalue = QLCDNumber(Dialog)
+        self.posvalue.setObjectName(u"posvalue")
+        self.posvalue.setMinimumSize(QSize(100, 70))
 
-        self.gridLayout_2.addWidget(self.lcdNumber, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.posvalue, 2, 0, 1, 1)
 
         self.label_2 = QLabel(Dialog)
         self.label_2.setObjectName(u"label_2")
@@ -115,11 +119,11 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.label_2, 1, 1, 1, 1)
 
-        self.lcdNumber_3 = QLCDNumber(Dialog)
-        self.lcdNumber_3.setObjectName(u"lcdNumber_3")
-        self.lcdNumber_3.setMinimumSize(QSize(100, 70))
+        self.etvalue = QLCDNumber(Dialog)
+        self.etvalue.setObjectName(u"etvalue")
+        self.etvalue.setMinimumSize(QSize(100, 70))
 
-        self.gridLayout_2.addWidget(self.lcdNumber_3, 2, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.etvalue, 2, 2, 1, 1)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -160,10 +164,10 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Prius monitor V0.1", None))
-        self.checkBox_3.setText(QCoreApplication.translate("Dialog", u"Pump on", None))
-        self.checkBox_2.setText(QCoreApplication.translate("Dialog", u"Close signal", None))
-        self.checkBox.setText(QCoreApplication.translate("Dialog", u"Open signal", None))
-        self.checkBox_4.setText(QCoreApplication.translate("Dialog", u"Power ok", None))
+        self.pump_cb.setText(QCoreApplication.translate("Dialog", u"Pump on", None))
+        self.close_cb.setText(QCoreApplication.translate("Dialog", u"Close signal", None))
+        self.open_cb.setText(QCoreApplication.translate("Dialog", u"Open signal", None))
+        self.power_cb.setText(QCoreApplication.translate("Dialog", u"Power ok", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"Valve position", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"Engine temp", None))
         self.label_2.setText(QCoreApplication.translate("Dialog", u"Tank temp", None))
