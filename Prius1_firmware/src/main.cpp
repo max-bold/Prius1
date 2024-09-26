@@ -26,13 +26,13 @@ class PWM {
   PWM() {
     DDRB |= B00001110;   // Enable outputs OC1A, OC1B, OC2A
                          // Initialising TC1
-    TCCR1A = B10100001;  // Clear OC1A/OC1B (pins D9, D10) on Compare Match, set Fast PWM, 8-bit mode
+    TCCR1A = B10100001;  // Clear OC1A/OC1B (pins D9, D10) on Compare Match
     TCCR1B = B00001001;  // set Fast PWM, 8-bit mode, with top at 0x00FF, set No prescaling (62.5 kHz)
     TCCR1C = B00000000;  // Disable Force Output Compare
     OCR1A = 0;           // Set A duty
     OCR1B = 0;           // Set B duty
                          // Initialising TC2
-    TCCR2A = B10000011;  // Clear OC2A (pin D11) on Compare Match (non-inverting mode), set Fast PWM with top at 0xFF
+    TCCR2A = B10000011;  // Clear OC2A (pin D11) on Compare Match (non-inverting mode)
     TCCR2B = B00000001;  // Set Fast PWM with top at 0xFF (62.5 kHz), disable Force Output Compare, set No prescaling
     OCR2A = 0;           // Set A duty
   }
@@ -55,6 +55,13 @@ class PWM {
     return OCR2A;
   }
 } pwm;
+
+class AIN {
+ private:
+ public:
+  int A0 = 0;
+  AIN(/* args */) {}
+} ain;
 
 class Valve {
  private:
