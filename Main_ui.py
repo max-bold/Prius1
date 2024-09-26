@@ -16,14 +16,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog,
-    QFrame, QGridLayout, QHBoxLayout, QLCDNumber,
-    QLabel, QPushButton, QSizePolicy, QWidget)
+    QFrame, QGridLayout, QLCDNumber, QLabel,
+    QPushButton, QSizePolicy, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(401, 355)
+        Dialog.resize(386, 345)
         self.gridLayout_2 = QGridLayout(Dialog)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout = QGridLayout()
@@ -63,6 +63,12 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addLayout(self.gridLayout, 5, 0, 1, 3)
 
+        self.StatusLabel = QLabel(Dialog)
+        self.StatusLabel.setObjectName(u"StatusLabel")
+        self.StatusLabel.setMaximumSize(QSize(16777215, 10))
+
+        self.gridLayout_2.addWidget(self.StatusLabel, 6, 0, 1, 3)
+
         self.label = QLabel(Dialog)
         self.label.setObjectName(u"label")
         self.label.setMaximumSize(QSize(16777215, 20))
@@ -70,11 +76,11 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
 
-        self.lcdNumber_5 = QLCDNumber(Dialog)
-        self.lcdNumber_5.setObjectName(u"lcdNumber_5")
-        self.lcdNumber_5.setMinimumSize(QSize(100, 70))
+        self.label_2 = QLabel(Dialog)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.gridLayout_2.addWidget(self.lcdNumber_5, 3, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.label_2, 1, 1, 1, 1)
 
         self.etadc = QLCDNumber(Dialog)
         self.etadc.setObjectName(u"etadc")
@@ -82,11 +88,23 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.etadc, 3, 2, 1, 1)
 
-        self.ttvalue = QLCDNumber(Dialog)
-        self.ttvalue.setObjectName(u"ttvalue")
-        self.ttvalue.setMinimumSize(QSize(100, 70))
+        self.label_3 = QLabel(Dialog)
+        self.label_3.setObjectName(u"label_3")
+        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.gridLayout_2.addWidget(self.ttvalue, 2, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.label_3, 1, 2, 1, 1)
+
+        self.etvalue = QLCDNumber(Dialog)
+        self.etvalue.setObjectName(u"etvalue")
+        self.etvalue.setMinimumSize(QSize(100, 70))
+
+        self.gridLayout_2.addWidget(self.etvalue, 2, 2, 1, 1)
+
+        self.posvalue = QLCDNumber(Dialog)
+        self.posvalue.setObjectName(u"posvalue")
+        self.posvalue.setMinimumSize(QSize(100, 70))
+
+        self.gridLayout_2.addWidget(self.posvalue, 2, 0, 1, 1)
 
         self.line = QFrame(Dialog)
         self.line.setObjectName(u"line")
@@ -95,67 +113,59 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.line, 4, 0, 1, 3)
 
+        self.gridLayout_3 = QGridLayout()
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.UpdButton = QPushButton(Dialog)
+        self.UpdButton.setObjectName(u"UpdButton")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.UpdButton.sizePolicy().hasHeightForWidth())
+        self.UpdButton.setSizePolicy(sizePolicy)
+        self.UpdButton.setMinimumSize(QSize(0, 20))
+        self.UpdButton.setMaximumSize(QSize(16777215, 20))
+
+        self.gridLayout_3.addWidget(self.UpdButton, 0, 2, 1, 1)
+
+        self.PortSelectCombo = QComboBox(Dialog)
+        self.PortSelectCombo.setObjectName(u"PortSelectCombo")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        sizePolicy1.setHorizontalStretch(1)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.PortSelectCombo.sizePolicy().hasHeightForWidth())
+        self.PortSelectCombo.setSizePolicy(sizePolicy1)
+        self.PortSelectCombo.setMinimumSize(QSize(0, 20))
+        self.PortSelectCombo.setMaximumSize(QSize(16777215, 20))
+
+        self.gridLayout_3.addWidget(self.PortSelectCombo, 0, 1, 1, 1)
+
+
+        self.gridLayout_2.addLayout(self.gridLayout_3, 0, 0, 1, 3)
+
+        self.ttvalue = QLCDNumber(Dialog)
+        self.ttvalue.setObjectName(u"ttvalue")
+        self.ttvalue.setMinimumSize(QSize(100, 70))
+
+        self.gridLayout_2.addWidget(self.ttvalue, 2, 1, 1, 1)
+
         self.lcdNumber_4 = QLCDNumber(Dialog)
         self.lcdNumber_4.setObjectName(u"lcdNumber_4")
         self.lcdNumber_4.setMinimumSize(QSize(100, 70))
 
         self.gridLayout_2.addWidget(self.lcdNumber_4, 3, 0, 1, 1)
 
-        self.label_3 = QLabel(Dialog)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lcdNumber_5 = QLCDNumber(Dialog)
+        self.lcdNumber_5.setObjectName(u"lcdNumber_5")
+        self.lcdNumber_5.setMinimumSize(QSize(100, 70))
 
-        self.gridLayout_2.addWidget(self.label_3, 1, 2, 1, 1)
-
-        self.posvalue = QLCDNumber(Dialog)
-        self.posvalue.setObjectName(u"posvalue")
-        self.posvalue.setMinimumSize(QSize(100, 70))
-
-        self.gridLayout_2.addWidget(self.posvalue, 2, 0, 1, 1)
-
-        self.label_2 = QLabel(Dialog)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_2.addWidget(self.label_2, 1, 1, 1, 1)
-
-        self.etvalue = QLCDNumber(Dialog)
-        self.etvalue.setObjectName(u"etvalue")
-        self.etvalue.setMinimumSize(QSize(100, 70))
-
-        self.gridLayout_2.addWidget(self.etvalue, 2, 2, 1, 1)
-
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.PortSelectCombo = QComboBox(Dialog)
-        self.PortSelectCombo.setObjectName(u"PortSelectCombo")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.PortSelectCombo.sizePolicy().hasHeightForWidth())
-        self.PortSelectCombo.setSizePolicy(sizePolicy)
-        self.PortSelectCombo.setMaximumSize(QSize(16777215, 20))
-
-        self.horizontalLayout.addWidget(self.PortSelectCombo)
-
-        self.UpdButton = QPushButton(Dialog)
-        self.UpdButton.setObjectName(u"UpdButton")
-
-        self.horizontalLayout.addWidget(self.UpdButton)
-
-
-        self.gridLayout_2.addLayout(self.horizontalLayout, 0, 0, 1, 3)
-
-        self.StatusLabel = QLabel(Dialog)
-        self.StatusLabel.setObjectName(u"StatusLabel")
-
-        self.gridLayout_2.addWidget(self.StatusLabel, 6, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.lcdNumber_5, 3, 1, 1, 1)
 
         self.gridLayout_2.setRowStretch(1, 1)
         self.gridLayout_2.setRowStretch(2, 1)
         self.gridLayout_2.setRowStretch(3, 1)
         self.gridLayout_2.setRowStretch(4, 1)
         self.gridLayout_2.setRowStretch(5, 1)
+        self.gridLayout_2.setRowStretch(6, 1)
 
         self.retranslateUi(Dialog)
 
@@ -168,10 +178,10 @@ class Ui_Dialog(object):
         self.close_cb.setText(QCoreApplication.translate("Dialog", u"Close signal", None))
         self.open_cb.setText(QCoreApplication.translate("Dialog", u"Open signal", None))
         self.power_cb.setText(QCoreApplication.translate("Dialog", u"Power ok", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Valve position", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"Engine temp", None))
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"Tank temp", None))
-        self.UpdButton.setText(QCoreApplication.translate("Dialog", u"Update", None))
         self.StatusLabel.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"Valve position", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"Tank temp", None))
+        self.label_3.setText(QCoreApplication.translate("Dialog", u"Engine temp", None))
+        self.UpdButton.setText(QCoreApplication.translate("Dialog", u"Update", None))
     # retranslateUi
 
