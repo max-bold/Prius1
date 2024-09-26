@@ -17,7 +17,6 @@ class MainWindow(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
-        # self.ui.comboBox.activated.connect()
         self.ui.UpdButton.pressed.connect(self.getportlist)
         self.getportlist()
 
