@@ -23,7 +23,7 @@ class PWM {
  private:
   /* data */
  public:
-  PWM() {
+  void init() {
     DDRB |= B00001110;   // Enable outputs OC1A, OC1B, OC2A
                          // Initialising TC1
     TCCR1A = B10100001;  // Clear OC1A/OC1B (pins D9, D10) on Compare Match
@@ -169,7 +169,7 @@ class Debugger {
       const char end[2]{'\r', '\n'};
 
     } d;
-    Serial.write((char*)&d, sizeof(d));
+    Serial.write((char *)&d, sizeof(d));
   }
   unsigned long lasttime = 0;
 
@@ -197,18 +197,18 @@ class Debugger {
 
 class EE {
  private:
+ public:
   struct Data {
     float pos;
     float temp;
   } data;
-
- public:
   void save() {
     data.pos = valve.get();
     data.temp = ttemp.get();
     EEPROM.put(dataaddr, data);
     EEPROM.put(initaddr, initkey);
   }
+
   bool restore() {
     unsigned char initval;
     if (EEPROM.get(initaddr, initval) == initkey) {
@@ -223,7 +223,14 @@ class EE {
 
 } ee;
 
-void ee_save() { ee.save(); }
+ISR(INT0_vect) {
+  EEPROM.put(dataaddr, ee.data);
+  // EEPtr e = dataaddr;
+  // const uint8_t *ptr = (const uint8_t *)&ee.data;
+  // for (int count = sizeof(ee.data); count; --count, ++e) {
+  //   *e = *ptr++;
+  // };
+}
 
 void setup() {
   // Setting inputs and outputs
@@ -231,9 +238,8 @@ void setup() {
   pinMode(close_pin, INPUT_PULLUP);
   pinMode(pump_pin, INPUT_PULLUP);
   pinMode(p_contr_pin, INPUT_PULLUP);
-  // pinMode(pos_pin, OUTPUT);
-  // pinMode(temp_pin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
 
 #ifdef debug
   Serial.begin(115200);
@@ -244,7 +250,12 @@ void setup() {
     ee.save();
   }
 
-  attachInterrupt(p_contr_inter, ee_save, RISING);
+  // attachInterrupt(p_contr_inter, ee_save, RISING);
+  pwm.init();
+
+  // Enable INT0 interupts
+  EICRA |= B00000011;
+  EIMSK |= B00000001;
 }
 
 void loop() {
@@ -256,4 +267,6 @@ void loop() {
   valve.update();
   ttemp.update();
   etemp.update();
+  ee.data.pos = valve.get();
+  ee.data.temp = ttemp.get();
 }
