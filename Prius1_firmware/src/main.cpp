@@ -56,13 +56,6 @@ class PWM {
   }
 } pwm;
 
-class AIN {
- private:
- public:
-  int A0 = 0;
-  AIN(/* args */) {}
-} ain;
-
 class Valve {
  private:
   float pos = 3.5;
@@ -225,6 +218,7 @@ class EE {
 
 ISR(INT0_vect) {
   EEPROM.put(dataaddr, ee.data);
+  EEPROM.put(initaddr, initkey);
   // EEPtr e = dataaddr;
   // const uint8_t *ptr = (const uint8_t *)&ee.data;
   // for (int count = sizeof(ee.data); count; --count, ++e) {
@@ -267,6 +261,7 @@ void loop() {
   valve.update();
   ttemp.update();
   etemp.update();
+
   ee.data.pos = valve.get();
   ee.data.temp = ttemp.get();
 }
