@@ -216,14 +216,20 @@ class EE {
 
 } ee;
 
+unsigned long intdistime = 0;
+
 ISR(INT0_vect) {
+  digitalWrite(5, LOW);
   EEPROM.put(dataaddr, ee.data);
   EEPROM.put(initaddr, initkey);
   // EEPtr e = dataaddr;
   // const uint8_t *ptr = (const uint8_t *)&ee.data;
   // for (int count = sizeof(ee.data); count; --count, ++e) {
   //   *e = *ptr++;
-  // };
+  //   };
+  digitalWrite(5, HIGH);
+  EIMSK &= ~B00000001;  // External Interrupt Request 0 disable
+  intdistime = millis();
 }
 
 void setup() {
@@ -233,7 +239,9 @@ void setup() {
   pinMode(pump_pin, INPUT_PULLUP);
   pinMode(p_contr_pin, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(5, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(5,HIGH);
 
 #ifdef debug
   Serial.begin(115200);
@@ -248,13 +256,15 @@ void setup() {
   pwm.init();
 
   // Enable INT0 interupts
-  EICRA |= B00000011;
-  EIMSK |= B00000001;
+  EICRA |= B00000011;  // The rising edge of INT0 generates an interrupt request
+  EIFR |= B00000001;   // Clear External Interrupt Flag 0
+  EIMSK |= B00000001;  // External Interrupt Request 0 Enable
+  // intdistime = millis();
 }
 
 void loop() {
 #ifdef debug
-  debugger.work(Debugger::SendMode::BYTES);
+  // debugger.work(Debugger::SendMode::BYTES);
 #endif
 
   // Updating analog outputs
@@ -264,4 +274,17 @@ void loop() {
 
   ee.data.pos = valve.get();
   ee.data.temp = ttemp.get();
+
+  // if (!(EIMSK & B00000001) && intdistime + 1000 < millis()) {
+  //   EIFR &= ~B00000001;
+  if (intdistime + 50 < millis()) {
+    EIFR |= B00000001;
+    EIMSK |= B00000001;
+  }
+  //   Serial.println("EIMSK Enabled");
+  //   Serial.println(EIFR);
+  //   Serial.println(EIMSK);
+  //   intdistime = millis();
+  // }
+  // digitalWrite(5, digitalRead(2));
 }
