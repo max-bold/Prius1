@@ -1,7 +1,6 @@
 import sys
 from typing import Iterable, Mapping
 from PySide6.QtWidgets import QApplication, QDialog
-from PySide6.QtCore import Qt
 import serial.tools
 import serial.tools.list_ports
 from Main_ui import Ui_Dialog
@@ -9,6 +8,7 @@ import serial
 from threading import Thread
 import time
 from reciever import Data
+from ctypes import sizeof
 
 
 class MainWindow(QDialog):
@@ -53,10 +53,10 @@ class Worker(Thread):
 
                         break
                     else:
-                        if len(data) == 22:
+                        if len(data) == sizeof(Data) + 2:
                             self.ui.StatusLabel.setText(f"Connection OK")
                             struct = Data.from_buffer_copy(data)
-                            self.ui.etvalue.display(f"{struct.et:.1f}")
+                            self.ui.etvalue.display(f"{struct.eti:.1f}")
                             self.ui.ttvalue.display(f"{struct.tt:.1f}")
                             self.ui.posvalue.display(f"{struct.vp:.2f}")
                             self.ui.open_cb.setChecked(struct.op == 0)
