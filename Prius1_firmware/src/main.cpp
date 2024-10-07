@@ -23,9 +23,9 @@ const int dataaddr = 1;
 // #define eewrite //Force saving all data to eeprom using write
 
 struct tprow {
-    int temp;
-    unsigned int pv;
-    float dif;
+    int t;
+    unsigned int p;
+    float d;
 };
 
 const tprow tptable[] = {
@@ -112,9 +112,12 @@ class Tanktemp {
     float get() { return temp; }
 
     unsigned int topwm(float t) {
-        for (unsigned int i = 0; i < sizeof(tptable) / sizeof(tprow); i++) {
-            if (t >= tptable[i].temp)
-                return tptable[i].pv + (t - tptable[i].temp) * tptable[i].dif;
+        int rows = sizeof(tptable) / sizeof(tprow);
+        for (int i = 0; i < rows; i++) {
+            tprow r = tptable[i];
+            if (t >= r.t) {
+                return r.p + (t - r.t) * r.d;
+            }
         }
         return 255;
     }
