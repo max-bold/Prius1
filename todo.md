@@ -1,0 +1,2 @@
+- Some times P1121 error occur. I suppose - because of long startup time
+- Manage P2601 error
