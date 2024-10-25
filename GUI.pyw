@@ -50,7 +50,6 @@ class Worker(Thread):
                     try:
                         data = self.device.read_until(b"\r\n")
                     except:
-
                         break
                     else:
                         if len(data) == sizeof(Data) + 2:
